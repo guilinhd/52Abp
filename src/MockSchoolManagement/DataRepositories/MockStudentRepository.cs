@@ -12,17 +12,18 @@ namespace MockSchoolManagement.DataRepositories
 
         public MockStudentRepository()
         {
-            _students.Add(
-                new Student() { 
-                    Id = 1,
-                    Name = "张三",
-                    Email = "zhangsan@hotmail.com"
-                },
-                new Student() { 
-                    Id = 2,
-                    Name = "李四",
-                    Email = "lisi@hotmail.com"
-                });
+            _students.Add(new Student() {
+                Id = 1,
+                Name = "张三",
+                Email = "zhangsan@hotmail.com"
+            });
+
+            _students.Add(new Student()
+            {
+                Id = 2,
+                Name = "李四",
+                Email = "lisi@hotmail.com"
+            });
         }
 
         public Student GetStudent(int id)

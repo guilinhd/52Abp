@@ -6,7 +6,7 @@ using MockSchoolManagement.Models;
 
 namespace MockSchoolManagement.DataRepositories
 {
-    interface IStudentRepository
+    public interface IStudentRepository
     {
         Student GetStudent(int id);
     }

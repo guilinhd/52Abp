@@ -16,7 +16,7 @@ namespace MockSchoolManagement.DataRepositories
             _appDbContext = appDbContext;
         }
 
-        public Student Add(Student student)
+        public Student Insert(Student student)
         {
             _appDbContext.Add(student);
             _appDbContext.SaveChanges();
@@ -32,6 +32,27 @@ namespace MockSchoolManagement.DataRepositories
         public IEnumerable<Student> GetStudents()
         {
             return _appDbContext.Students;
+        }
+
+        public Student Update(Student student)
+        {
+            var updateStudent = _appDbContext.Attach<Student>(student);
+            updateStudent.State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+            _appDbContext.SaveChanges();
+
+            return student;
+        }
+
+        public Student Delete(int id)
+        {
+            Student student = _appDbContext.Students.Find(id);
+            if (student != null)
+            {
+                _appDbContext.Students.Remove(student);
+                _appDbContext.SaveChanges();
+            }
+
+            return student;
         }
     }
 }

@@ -27,7 +27,8 @@ namespace MockSchoolManagement
                 options.UseSqlServer(Configuration.GetConnectionString("MockStudentDBConnection"));
                 });
             services.AddControllersWithViews();
-            services.AddSingleton<IStudentRepository, MockStudentRepository>();
+            //services.AddSingleton<IStudentRepository, MockStudentRepository>();
+            services.AddTransient<IStudentRepository, SqlStudentRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -16,5 +16,10 @@ namespace MockSchoolManagement.Infrastructure
         {
 
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Seed();
+        }
     }
 }

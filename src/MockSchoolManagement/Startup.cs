@@ -3,11 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using MockSchoolManagement.DataRepositories;
+using Microsoft.EntityFrameworkCore;
+using MockSchoolManagement.Infrastructure;
 
 namespace MockSchoolManagement
 {
@@ -24,6 +22,10 @@ namespace MockSchoolManagement
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddControllersWithViews(a => a.EnableEndpointRouting = false).AddXmlSerializerFormatters();
+
+            services.AddDbContextPool<AppDbContext>(options => {
+                options.UseSqlServer(Configuration.GetConnectionString("MockStudentDBConnection"));
+                });
             services.AddControllersWithViews();
             services.AddSingleton<IStudentRepository, MockStudentRepository>();
         }

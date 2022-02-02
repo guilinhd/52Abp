@@ -1,27 +1,28 @@
-﻿@model IEnumerable<Student>
+﻿@model Student
 
 @{
     ViewData["Title"] = "学生详细信息";
 }
 
-<div class="card-deck">
-    @foreach (var student in Model)
-    {
-        <div class="card m-3">
+<h3>学生详细信息</h3>
+
+<div class="row justify-content-center m-3">
+    <div class="col-sm-6">
+        <div class="card">
             <div class="card-header">
-                <h1>@student.Name</h1>
+                <h1>@Model.Name</h1>
             </div>
             <div class="card-body text-center">
                 <img class="card-img-top" src="~/images/noimage.png" />
-                <h4>主修科目:@student.Major</h4>
+                <h4>学生ID:@Model.Id</h4>
+                <h4>邮箱:@Model.Email</h4>
+                <h4>主修科目:@Model.Major</h4>
             </div>
             <div class="card-footer text-center">
-                <a asp-controller="Home" asp-action="Details" asp-route-id="@student.Id" class="btn btn-primary">查看</a>
+                <a href="#" class="btn btn-primary">返回</a>
                 <a href="#" class="btn btn-primary">修改</a>
                 <a href="#" class="btn btn-danger">删除</a>
             </div>
         </div>
-    }
+    </div>
 </div>
-
-

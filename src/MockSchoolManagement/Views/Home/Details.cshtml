@@ -2,6 +2,15 @@
 
 @{
     ViewData["Title"] = "学生详细信息";
+    string photoPath = "~/images/";
+    if (Model.PhotoPath != null)
+    {
+        photoPath += Model.PhotoPath;
+    }
+    else
+    {
+        photoPath += "noimage.png";
+    }
 }
 
 <h3>学生详细信息</h3>
@@ -13,7 +22,7 @@
                 <h1>@Model.Name</h1>
             </div>
             <div class="card-body text-center">
-                <img class="card-img-top" src="~/images/noimage.png" />
+                <img class="card-img-top" src="@photoPath" asp-append-version="true" />
                 <h4>学生ID:@Model.Id</h4>
                 <h4>邮箱:@Model.Email</h4>
                 <h4>主修科目:@Model.Major</h4>

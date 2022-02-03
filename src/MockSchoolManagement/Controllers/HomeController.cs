@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using MockSchoolManagement.DataRepositories;
 using System.Text.Json;
 using System.Text.Unicode;
+using MockSchoolManagement.ViewModels;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace MockSchoolManagement.Controllers
 {
@@ -18,11 +21,14 @@ namespace MockSchoolManagement.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IStudentRepository _studentRepository;
-
-        public HomeController(ILogger<HomeController> logger, IStudentRepository studentRepository)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+        public HomeController(ILogger<HomeController> logger, 
+            IStudentRepository studentRepository,
+            IWebHostEnvironment webHostEnvironment)
         {
             _logger = logger;
             _studentRepository = studentRepository;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         
@@ -43,11 +49,29 @@ namespace MockSchoolManagement.Controllers
         }
 
         [HttpPost]
-        public IActionResult  Create(Student model)
+        public IActionResult  Create(StudentCreateViewModel model)
         {
             if (ModelState.IsValid)
             {
-                Student student = _studentRepository.Add(model);
+                string photoPath = null;
+                if (model.Photos != null)
+                {
+                    string imageFolder = _webHostEnvironment.WebRootPath + "/images/";
+                    photoPath = Guid.NewGuid().ToString() + "_" + model.Photos.FileName;
+
+                    string filePath = Path.Combine(imageFolder + photoPath);
+                    model.Photos.CopyTo(new FileStream(filePath, FileMode.Create));
+                }
+
+
+                Student student = new Student()
+                {
+                    Name = model.Name,
+                    Email = model.Email,
+                    Major = model.Major,
+                    PhotoPath = photoPath
+                };
+                _studentRepository.Insert(student);
                 return RedirectToAction("Details", "Home", new { id = student.Id });
             }
 

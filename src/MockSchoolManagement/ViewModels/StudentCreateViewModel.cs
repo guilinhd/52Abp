@@ -10,7 +10,6 @@ namespace MockSchoolManagement.ViewModels
 {
     public class StudentCreateViewModel
     {
-        public int Id { get; set; }
 
         [Display(Name = "姓名")]
         [Required(ErrorMessage = "请输入姓名")]
@@ -26,6 +25,6 @@ namespace MockSchoolManagement.ViewModels
         public string Email { get; set; }
 
         [Display(Name = "头像图片")]
-        public IFormFile Photos { set; get; }
+        public List<IFormFile> Photos { set; get; }
     }
 }

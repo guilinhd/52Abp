@@ -2,15 +2,8 @@
 
 @{
     ViewData["Title"] = "学生详细信息";
-    string photoPath = "~/images/";
-    if (Model.PhotoPath != null)
-    {
-        photoPath += Model.PhotoPath;
-    }
-    else
-    {
-        photoPath += "noimage.png";
-    }
+    string photoPath = "~/images/" + (Model.PhotoPath ?? "noimage.png");
+    
 }
 
 <h3>学生详细信息</h3>
@@ -22,14 +15,13 @@
                 <h1>@Model.Name</h1>
             </div>
             <div class="card-body text-center">
-                <img class="card-img-top" src="@photoPath" asp-append-version="true" />
-                <h4>学生ID:@Model.Id</h4>
+                <img class="card-img-top imageThumbnail" src="@photoPath" asp-append-version="true" />
                 <h4>邮箱:@Model.Email</h4>
-                <h4>主修科目:@Model.Major</h4>
+                <h4>主修科目:@Model.Major.GetDisplayName()</h4>
             </div>
             <div class="card-footer text-center">
-                <a href="#" class="btn btn-primary">返回</a>
-                <a href="#" class="btn btn-primary">修改</a>
+                <a class="btn btn-primary" asp-action="Index" asp-controller="Home">返回</a>
+                <a asp-action="Edit" asp-controller="Home" asp-route-id="@Model.Id" class="btn btn-primary">修改</a>
                 <a href="#" class="btn btn-danger">删除</a>
             </div>
         </div>

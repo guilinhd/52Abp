@@ -8,22 +8,18 @@
 <div class="card-deck">
     @foreach (var student in Model)
     {
-        photoPath = "~/images/noimage.png";
-        if (student.PhotoPath != null)
-        {
-            photoPath = "~/images/" + student.PhotoPath;
-        }
+        photoPath = "~/images/" + (student.PhotoPath ?? "noimage.png");
         <div class="card m-3">
             <div class="card-header">
                 <h1>@student.Name</h1>
             </div>
             <div class="card-body text-center">
-                <img class="card-img-top" src="@photoPath" asp-append-version="true" />
-                <h4>主修科目:@student.Major</h4>
+                <img class="card-img-top imageThumbnail" src="@photoPath" asp-append-version="true" />
+                <h4>主修科目:@student.Major.GetDisplayName()</h4>
             </div>
             <div class="card-footer text-center">
                 <a asp-controller="Home" asp-action="Details" asp-route-id="@student.Id" class="btn btn-primary">查看</a>
-                <a href="#" class="btn btn-primary">修改</a>
+                <a asp-controller="Home" asp-action="Edit" asp-route-id="@student.Id" class="btn btn-primary">修改</a>
                 <a href="#" class="btn btn-danger">删除</a>
             </div>
         </div>

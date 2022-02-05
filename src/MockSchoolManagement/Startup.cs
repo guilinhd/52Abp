@@ -41,6 +41,7 @@ namespace MockSchoolManagement
             else
             {
                 app.UseExceptionHandler("/Home/Error");
+                
             }
             app.UseStaticFiles();
 

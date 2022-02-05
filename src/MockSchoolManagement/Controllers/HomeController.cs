@@ -96,7 +96,10 @@ namespace MockSchoolManagement.Controllers
                 model.Major = student.Major;
                 model.ExistingPhotoPath = student.PhotoPath;
             }
-
+            else
+            {
+                return View("StudentNoFound", id);
+            }
             return View(model);
         }
 
@@ -151,7 +154,16 @@ namespace MockSchoolManagement.Controllers
             //    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(UnicodeRanges.All)
             //});
 
-            return View(_studentRepository.GetStudent(id));
+            Student student = _studentRepository.GetStudent(id);
+            if (student == null)
+            {
+                return View("StudentNoFound", id);
+            }
+            else
+            {
+                return View(_studentRepository.GetStudent(id));
+            }
+            
         }
 
         

@@ -38,6 +38,13 @@ namespace MockSchoolManagement
             {
                 app.UseDeveloperExceptionPage();
             }
+            else if (env.IsStaging() || env.IsProduction() || env.IsEnvironment("UAT"))
+            {
+                //app.UseStatusCodePages();
+                app.UseExceptionHandler("/Error");
+                //app.UseStatusCodePagesWithRedirects("/Error/{0}");
+                app.UseStatusCodePagesWithReExecute("/Error/{0}");
+            }
             else
             {
                 app.UseExceptionHandler("/Home/Error");

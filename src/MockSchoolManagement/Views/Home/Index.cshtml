@@ -2,24 +2,33 @@
 
 @{
     ViewData["Title"] = "学生详细信息";
-    string photoPath = "";
 }
 
 <div class="card-deck">
     @foreach (var student in Model)
     {
-        photoPath = "~/images/" + (student.PhotoPath ?? "noimage.png");
+        var photoPath = "~/images/noimage.png";
+        if (student.PhotoPath != null)
+        {
+            photoPath = "~/images/" + student.PhotoPath;
+        }
+
+
+
         <div class="card m-3">
             <div class="card-header">
-                <h1>@student.Name</h1>
+                <h3 class="card-title">@student.Name</h3>
             </div>
+
+            <img class="card-img-top imageThumbnail " src="@photoPath" asp-append-version="true" />
+
             <div class="card-body text-center">
-                <img class="card-img-top imageThumbnail" src="@photoPath" asp-append-version="true" />
-                <h4>主修科目:@student.Major.GetDisplayName()</h4>
+                <h5 class="card-title">主修科目：@student.Major.GetDisplayName()</h5>
             </div>
+
             <div class="card-footer text-center">
-                <a asp-controller="Home" asp-action="Details" asp-route-id="@student.Id" class="btn btn-primary">查看</a>
-                <a asp-controller="Home" asp-action="Edit" asp-route-id="@student.Id" class="btn btn-primary">修改</a>
+                <a asp-controller="Home" class="btn btn-info" asp-action="Details" asp-route-id="@student.Id">查看</a>
+                <a asp-controller="home" asp-action="edit" asp-route-id="@student.Id" class="btn btn-primary m-1">编辑</a>
                 <a href="#" class="btn btn-danger">删除</a>
             </div>
         </div>

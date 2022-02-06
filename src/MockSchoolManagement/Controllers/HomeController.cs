@@ -98,6 +98,7 @@ namespace MockSchoolManagement.Controllers
             }
             else
             {
+                Response.StatusCode = 404;
                 return View("StudentNoFound", id);
             }
             return View(model);
@@ -154,16 +155,19 @@ namespace MockSchoolManagement.Controllers
             //    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(UnicodeRanges.All)
             //});
 
-            Student student = _studentRepository.GetStudent(id);
-            if (student == null)
-            {
-                return View("StudentNoFound", id);
-            }
-            else
-            {
-                return View(_studentRepository.GetStudent(id));
-            }
-            
+            //throw new Exception("Details 视图出错了!");
+            //Student student = _studentRepository.GetStudent(id);
+            //if (student == null)
+            //{
+            //    return View("StudentNoFound", id);
+            //}
+            //else
+            //{
+            //    return View(_studentRepository.GetStudent(id));
+            //}
+
+
+            return View(_studentRepository.GetStudent(id));
         }
 
         

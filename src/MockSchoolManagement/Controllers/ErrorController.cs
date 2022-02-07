@@ -47,9 +47,11 @@ namespace MockSchoolManagement.Controllers
         {
             var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
 
-            ViewBag.Path = exceptionHandlerPathFeature.Path;
-            ViewBag.ErrorMessage = exceptionHandlerPathFeature.Error.Message;
-            ViewBag.StackTrace = exceptionHandlerPathFeature.Error.StackTrace;
+            //ViewBag.Path = exceptionHandlerPathFeature.Path;
+            //ViewBag.ErrorMessage = exceptionHandlerPathFeature.Error.Message;
+            //ViewBag.StackTrace = exceptionHandlerPathFeature.Error.StackTrace;
+
+            logger.LogError($"路径:{exceptionHandlerPathFeature.Path}, 产生错误:{exceptionHandlerPathFeature.Error}");
 
             return View("Error");
         }

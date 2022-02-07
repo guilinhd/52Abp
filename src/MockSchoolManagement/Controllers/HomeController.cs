@@ -166,6 +166,12 @@ namespace MockSchoolManagement.Controllers
             //    return View(_studentRepository.GetStudent(id));
             //}
 
+            _logger.LogTrace("Trace Log");
+            _logger.LogInformation("Information Log");
+            _logger.LogDebug("Debug Log");
+            _logger.LogWarning("Warning Log");
+            _logger.LogError("Error Log");
+            _logger.LogCritical("Critical Log");
 
             return View(_studentRepository.GetStudent(id));
         }

@@ -6,6 +6,8 @@ using Microsoft.Extensions.Hosting;
 using MockSchoolManagement.DataRepositories;
 using Microsoft.EntityFrameworkCore;
 using MockSchoolManagement.Infrastructure;
+using Microsoft.AspNetCore.Identity;
+using MockSchoolManagement.CustomerMiddlewares;
 
 namespace MockSchoolManagement
 {
@@ -26,6 +28,20 @@ namespace MockSchoolManagement
             services.AddDbContextPool<AppDbContext>(options => {
                 options.UseSqlServer(Configuration.GetConnectionString("MockStudentDBConnection"));
                 });
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddErrorDescriber<CustomIdentityErrorDescriber>()
+                .AddEntityFrameworkStores<AppDbContext>();
+
+            services.Configure<IdentityOptions>(options => {
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+
+                options.SignIn.RequireConfirmedEmail = false;
+            });
+
             services.AddControllersWithViews();
             //services.AddSingleton<IStudentRepository, MockStudentRepository>();
             services.AddTransient<IStudentRepository, SqlStudentRepository>();
@@ -52,8 +68,8 @@ namespace MockSchoolManagement
             }
             app.UseStaticFiles();
 
+            app.UseAuthentication();
             app.UseRouting();
-
             app.UseAuthorization();
 
             //app.UseMvc();

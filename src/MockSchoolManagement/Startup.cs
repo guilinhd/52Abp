@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using MockSchoolManagement.Infrastructure;
 using Microsoft.AspNetCore.Identity;
 using MockSchoolManagement.CustomerMiddlewares;
+using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MockSchoolManagement
 {
@@ -40,9 +42,16 @@ namespace MockSchoolManagement
                 options.Password.RequireUppercase = false;
 
                 options.SignIn.RequireConfirmedEmail = false;
+
+                
             });
 
-            services.AddControllersWithViews();
+            services.AddControllersWithViews(configure => {
+                var policy = new AuthorizationPolicyBuilder()
+                    .RequireAuthenticatedUser()
+                    .Build();
+                configure.Filters.Add(new AuthorizeFilter(policy));
+            });
             //services.AddSingleton<IStudentRepository, MockStudentRepository>();
             services.AddTransient<IStudentRepository, SqlStudentRepository>();
         }
@@ -68,8 +77,9 @@ namespace MockSchoolManagement
             }
             app.UseStaticFiles();
 
-            app.UseAuthentication();
             app.UseRouting();
+
+            app.UseAuthentication();
             app.UseAuthorization();
 
             //app.UseMvc();

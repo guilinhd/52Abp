@@ -1,17 +1,20 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using MockSchoolManagement.CustomerMiddlewares.Utils;
 
 namespace MockSchoolManagement.ViewModels
 {
     public class RegisterViewModel
     {
         [Required]
-        [Display(Name = "邮箱地址")]
-        [RegularExpression(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$",
-            ErrorMessage = "邮箱的格式不正确")]
+        [EmailAddress]
+        [Display(Name = "邮箱")]
+        [Remote(action: "IsEmailInUse", controller: "Account")]
+        [ValidEmailDomain(allowedDomain: "qq.com", ErrorMessage = "只能使用QQ邮箱")]
         public string Email { get; set; }
 
         [Required]

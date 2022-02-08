@@ -12,6 +12,7 @@ using System.Text.Unicode;
 using MockSchoolManagement.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MockSchoolManagement.Controllers
 {
@@ -31,23 +32,26 @@ namespace MockSchoolManagement.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        
+        [AllowAnonymous]
         public IActionResult Index()
         {
 
             return View(_studentRepository.GetStudents());
         }
 
+        [AllowAnonymous]
         public IActionResult Privacy()
         {
             return View();
         }
 
+        
         public IActionResult Create()
         {
             return View();
         }
 
+        
         [HttpPost]
         public IActionResult  Create(StudentCreateViewModel model)
         {
@@ -83,6 +87,7 @@ namespace MockSchoolManagement.Controllers
             return View();
         }
 
+        
         public IActionResult Edit(int id)
         {
             StudentUpdateViewModel model = new StudentUpdateViewModel();
@@ -106,6 +111,7 @@ namespace MockSchoolManagement.Controllers
 
         //通过模型绑定，作为操作方法的参数
         //StudentEditViewModel 会接收来自Post请求的Edit表单数据
+        
         [HttpPost]
         public IActionResult Edit(StudentUpdateViewModel model)
         {
@@ -148,6 +154,7 @@ namespace MockSchoolManagement.Controllers
             return View(model);
         }
 
+        [AllowAnonymous]
         public IActionResult Details(int id)
         {
             //return Json(_studentRepository.GetStudent(1), new JsonSerializerOptions()
@@ -156,24 +163,24 @@ namespace MockSchoolManagement.Controllers
             //});
 
             //throw new Exception("Details 视图出错了!");
-            //Student student = _studentRepository.GetStudent(id);
-            //if (student == null)
-            //{
-            //    return View("StudentNoFound", id);
-            //}
-            //else
-            //{
-            //    return View(_studentRepository.GetStudent(id));
-            //}
+            Student student = _studentRepository.GetStudent(id);
+            if (student == null)
+            {
+                return View("StudentNoFound", id);
+            }
+            else
+            {
+                return View(_studentRepository.GetStudent(id));
+            }
 
-            _logger.LogTrace("Trace Log");
-            _logger.LogInformation("Information Log");
-            _logger.LogDebug("Debug Log");
-            _logger.LogWarning("Warning Log");
-            _logger.LogError("Error Log");
-            _logger.LogCritical("Critical Log");
+            //_logger.LogTrace("Trace Log");
+            //_logger.LogInformation("Information Log");
+            //_logger.LogDebug("Debug Log");
+            //_logger.LogWarning("Warning Log");
+            //_logger.LogError("Error Log");
+            //_logger.LogCritical("Critical Log");
 
-            return View(_studentRepository.GetStudent(id));
+            //return View(_studentRepository.GetStudent(id));
         }
 
         

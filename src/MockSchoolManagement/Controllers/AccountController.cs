@@ -7,18 +7,19 @@ using MockSchoolManagement.ViewModels;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using MockSchoolManagement.Models;
 
 namespace MockSchoolManagement.Controllers
 {
     public class AccountController : Controller
     {
         private readonly ILogger<AccountController> _logger;
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         public AccountController(
             ILogger<AccountController> logger,
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signManager)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signManager)
         {
             _logger = logger;
             _userManager = userManager;
@@ -38,10 +39,11 @@ namespace MockSchoolManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser()
+                var user = new ApplicationUser()
                 {
                     Email = model.Email,
-                    UserName = model.Email
+                    UserName = model.Email,
+                    City = model.City
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);
@@ -112,6 +114,7 @@ namespace MockSchoolManagement.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> IsEmailInUse(string email)
         {
+            
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {

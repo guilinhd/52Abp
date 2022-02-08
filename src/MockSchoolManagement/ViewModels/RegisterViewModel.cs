@@ -27,5 +27,9 @@ namespace MockSchoolManagement.ViewModels
         [Display(Name = "确认密码")]
         [Compare("Password", ErrorMessage = "密码与确认密码不一致, 请重新输入")]
         public string ConfirmPassword { set; get; }
+
+        [Required]
+        [Display(Name = "所在城市")]
+        public string City { set; get; }
     }
 }

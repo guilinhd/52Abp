@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> _signInManager
+﻿
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -52,7 +51,8 @@
                     </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
-                    @if (_signInManager.IsSignedIn(User))
+                    
+                    @if (User.Identity.IsAuthenticated)
                     {
                         <li class="nav-item">
                             <form method="post" asp-controller="account" asp-action="logout">

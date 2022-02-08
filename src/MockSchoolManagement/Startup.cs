@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using MockSchoolManagement.CustomerMiddlewares;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
+using MockSchoolManagement.Models;
 
 namespace MockSchoolManagement
 {
@@ -31,7 +32,7 @@ namespace MockSchoolManagement
                 options.UseSqlServer(Configuration.GetConnectionString("MockStudentDBConnection"));
                 });
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddErrorDescriber<CustomIdentityErrorDescriber>()
                 .AddEntityFrameworkStores<AppDbContext>();
 

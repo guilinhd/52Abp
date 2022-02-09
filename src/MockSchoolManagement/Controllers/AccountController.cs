@@ -49,8 +49,16 @@ namespace MockSchoolManagement.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, false);
-                    return RedirectToAction("Index", "Home");
+                    if (User.IsInRole("Admin"))
+                    {
+                        return RedirectToAction("Index", "User");
+                    }
+                    else
+                    {
+                        await _signInManager.SignInAsync(user, false);
+                        return RedirectToAction("Index", "Home");
+                    }
+                    
                 }
 
                 foreach (var error in result.Errors)
@@ -124,6 +132,12 @@ namespace MockSchoolManagement.Controllers
             {
                 return Json($"邮箱:{email} 已经被注册使用了!");
             }
+        }
+
+        [HttpGet]
+        public IActionResult AccessDenied()
+        {
+            return View();
         }
     }
 }

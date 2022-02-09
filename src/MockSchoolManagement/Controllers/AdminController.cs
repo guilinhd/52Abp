@@ -7,9 +7,11 @@ using MockSchoolManagement.ViewModels;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 using MockSchoolManagement.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace MockSchoolManagement.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -76,6 +78,7 @@ namespace MockSchoolManagement.Controllers
                 Users = new List<UserRoleViewModel>()
             };
 
+            
             var users = _userManager.Users.ToList();
             foreach (var user in users)
             {
@@ -113,6 +116,7 @@ namespace MockSchoolManagement.Controllers
             {
                 var user = await _userManager.FindByIdAsync(model.Users[i].Id);
 
+                
                 IdentityResult result = null;
                 //检查当前的userid，是否被选中，如果被选中了则添加到角色中。
 

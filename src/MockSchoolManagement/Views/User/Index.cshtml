@@ -4,6 +4,7 @@
 }
 
 <h1>所有用户列表</h1>
+<div asp-validation-summary="All" class="text-danger"></div>
 @if (Model.Any())
 {
     <a class="btn btn-primary mb-3" style="width:auto" asp-action="register"
@@ -18,13 +19,22 @@
                 <h5 class="card-title">@user.UserName</h5>
             </div>
             <div class="card-footer">
-                <a asp-controller="user"
-                   asp-action="edit"
-                   asp-route-id="@user.Id"
-                   class="btn btn-primary">
-                    编辑
-                </a>
-                <a href="#" class="btn btn-danger">删除</a>
+                <form method="post" asp-action="Delete" asp-controller="User" asp-route-id="@user.Id">
+                    <a asp-controller="user"
+                       asp-action="edit"
+                       asp-route-id="@user.Id"
+                       class="btn btn-primary">
+                        编辑
+                    </a>
+                    <span id="confirmDeleteSpan_@user.Id" style="display:none">
+                        <span>你确定要删除当前用户?</span>
+                        <button type="submit" class="btn btn-danger">是</button>
+                        <a href="#" class="btn btn-primary" onclick="confirmDelete('@user.Id', false)">否</a>
+                    </span>
+                    <span id="deleteSpan_@user.Id">
+                        <a href="#" class="btn btn-danger" onclick="confirmDelete('@user.Id', true)">删除</a>
+                    </span>
+                </form>
             </div>
         </div>
     }

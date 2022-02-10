@@ -166,7 +166,8 @@ namespace MockSchoolManagement.Controllers
             Student student = _studentRepository.GetStudent(id);
             if (student == null)
             {
-                return View("StudentNoFound", id);
+                ViewBag.ErrorMessage = $"学生Id:{id} 的信息不存在!";
+                return View("NoFound");
             }
             else
             {

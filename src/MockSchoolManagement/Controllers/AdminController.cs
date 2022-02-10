@@ -68,7 +68,7 @@ namespace MockSchoolManagement.Controllers
             if (role == null)
             {
                 ViewBag.ErrorMessage = $"角色Id:{id}的信息不存在,请重试!";
-                return RedirectToAction("NoFound", "Error");
+                return RedirectToAction("NoFound");
             }
 
             RoleUpdateViewModel model = new RoleUpdateViewModel()
@@ -101,7 +101,7 @@ namespace MockSchoolManagement.Controllers
             if (role == null)
             {
                 ViewBag.ErrorMessage = $"角色Id:{model.Id}的信息不存在,请重试!";
-                return RedirectToAction("NoFound", "Error");
+                return RedirectToAction("NoFound");
             }
 
             ModelState.AddModelError(string.Empty, "角色信息更新成功!");

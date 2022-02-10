@@ -11,23 +11,32 @@
 
     foreach (var role in Model)
     {
-        <div class="card mb-3">
-            <div class="card-header">
-                角色Id : @role.Id
+        <form method="post" asp-action="Delete" asp-controller="Admin" asp-route-id="@role.Id">
+            <div class="card mb-3">
+                <div class="card-header">
+                    角色Id : @role.Id
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">@role.Name</h5>
+                </div>
+                <div class="card-footer">
+                    <a asp-controller="admin"
+                       asp-action="edit"
+                       asp-route-id="@role.Id"
+                       class="btn btn-primary">
+                        编辑
+                    </a>
+                    <span id="confirmDeleteSpan_@role.Id" style="display:none">
+                        <span>你确定要删除当前角色?</span>
+                        <button type="submit" class="btn btn-danger">是</button>
+                        <a href="#" class="btn btn-primary" onclick="confirmDelete('@role.Id', false)">否</a>
+                    </span>
+                    <span id="deleteSpan_@role.Id">
+                        <a href="#" class="btn btn-danger" onclick="confirmDelete('@role.Id', true)">删除</a>
+                    </span>
+                </div>
             </div>
-            <div class="card-body">
-                <h5 class="card-title">@role.Name</h5>
-            </div>
-            <div class="card-footer">
-                <a asp-controller="admin"
-                   asp-action="edit"
-                   asp-route-id="@role.Id"
-                   class="btn btn-primary">
-                    编辑
-                </a>
-                <a href="#" class="btn btn-danger">删除</a>
-            </div>
-        </div>
+        </form>
     }
 }
 else
@@ -43,4 +52,7 @@ else
             <a class="btn btn-primary" asp-action="create" asp-controller="admin" style="width:auto">创建角色</a>
         </div>
     </div>
+}
+@section scripts{
+    <script src="~/js/CustomScript.js"></script>
 }

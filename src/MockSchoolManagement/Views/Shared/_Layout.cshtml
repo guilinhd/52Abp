@@ -47,9 +47,12 @@
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="home" asp-action="index">学生列表</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-controller="home" asp-action="create">添加学生</a>
-                    </li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="home" asp-action="create">添加学生</a>
+                        </li>
+                    }
                     @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
                     {
                         <li class="nav-item dropdown">
@@ -109,7 +112,7 @@
     <script src="~/lib/twitter-bootstrap/js/bootstrap.js"></script>
     <script src="~/lib/jquery-validate/jquery.validate.js"></script>
     <script src="~/lib/jquery-validate-unobtrusive/jquery.validate.unobtrusive.js"></script>
-    <script src="~/js/CustomScript.js"></script>
+    
     @RenderSection("Scripts", required: false)
 </body>
 </html>

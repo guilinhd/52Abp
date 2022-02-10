@@ -146,6 +146,28 @@ namespace MockSchoolManagement.Controllers
             return View(model);
         }
 
-        
+        [HttpPost]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role == null)
+            {
+                ViewBag.ErrorMessage = $"角色Id:{id}的信息不存在,请重试!";
+                return RedirectToAction("NoFound");
+            }
+
+            var result = await _roleManager.DeleteAsync(role);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Admin");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            return RedirectToAction("Index", "Admin");
+        }
     }
 }

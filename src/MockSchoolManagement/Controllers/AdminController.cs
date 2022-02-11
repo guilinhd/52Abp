@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Identity;
 using MockSchoolManagement.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 
 namespace MockSchoolManagement.Controllers
 {
@@ -68,7 +69,7 @@ namespace MockSchoolManagement.Controllers
             if (role == null)
             {
                 ViewBag.ErrorMessage = $"角色Id:{id}的信息不存在,请重试!";
-                return RedirectToAction("NoFound");
+                return View("NoFound");
             }
 
             RoleUpdateViewModel model = new RoleUpdateViewModel()
@@ -101,7 +102,7 @@ namespace MockSchoolManagement.Controllers
             if (role == null)
             {
                 ViewBag.ErrorMessage = $"角色Id:{model.Id}的信息不存在,请重试!";
-                return RedirectToAction("NoFound");
+                return View("NoFound");
             }
 
             ModelState.AddModelError(string.Empty, "角色信息更新成功!");
@@ -153,21 +154,31 @@ namespace MockSchoolManagement.Controllers
             if (role == null)
             {
                 ViewBag.ErrorMessage = $"角色Id:{id}的信息不存在,请重试!";
-                return RedirectToAction("NoFound");
+                return View("NoFound");
             }
 
-            var result = await _roleManager.DeleteAsync(role);
-            if (result.Succeeded)
+            try
             {
+                var result = await _roleManager.DeleteAsync(role);
+                if (result.Succeeded)
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
                 return RedirectToAction("Index", "Admin");
             }
-
-            foreach (var error in result.Errors)
+            catch (DbUpdateException ex)
             {
-                ModelState.AddModelError(string.Empty, error.Description);
-            }
+                ViewBag.ErrorTitle = $"角色{role.Name}正在被使用中.....";
+                ViewBag.ErrorMessage = $"无法删除{role.Name}角色, 因为此角色中已经存在用户。 如果想删除此角色,需要先从该角色中删除用户，然后尝试删除该角色本身。";
 
-            return RedirectToAction("Index", "Admin");
+                return View("Error");
+            }
         }
     }
 }

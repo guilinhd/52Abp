@@ -59,7 +59,7 @@
             }
         </div>
         <div class="card-footer">
-            <a href="#" style="width:auto" class="btn btn-primary">
+            <a asp-action="Role" style="width:auto" class="btn btn-primary" asp-route-id="@Model.Id">
                 管理角色
             </a>
         </div>
@@ -83,7 +83,7 @@
             }
         </div>
         <div class="card-footer">
-            <a href="#" style="width:auto" class="btn btn-primary">
+            <a asp-action="Claim" style="width:auto" class="btn btn-primary" asp-route-id="@Model.Id">
                 管理所有权
             </a>
         </div>

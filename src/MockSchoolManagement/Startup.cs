@@ -28,7 +28,7 @@ namespace MockSchoolManagement
         {
             //services.AddControllersWithViews(a => a.EnableEndpointRouting = false).AddXmlSerializerFormatters();
 
-            services.AddDbContextPool<AppDbContext>(options => {
+            services.AddDbContext<AppDbContext>(options => {
                 options.UseSqlServer(Configuration.GetConnectionString("MockStudentDBConnection"));
                 });
 
@@ -47,6 +47,9 @@ namespace MockSchoolManagement
                 
             });
 
+            services.AddAuthentication(options => { 
+                
+            });
             services.AddControllersWithViews(configure => {
                 var policy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()

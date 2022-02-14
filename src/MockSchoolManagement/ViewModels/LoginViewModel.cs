@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Authentication;
 
 namespace MockSchoolManagement.ViewModels
 {
@@ -18,5 +19,9 @@ namespace MockSchoolManagement.ViewModels
         [DataType(DataType.Password)]
         [Display(Name = "密码")]
         public string Password { set; get; }
+
+        public string ReturnUrl { set; get; }
+
+        public IList<AuthenticationScheme> ExternalLogins { set; get; }
     }
 }

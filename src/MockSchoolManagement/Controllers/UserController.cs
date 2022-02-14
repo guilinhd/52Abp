@@ -53,7 +53,7 @@ namespace MockSchoolManagement.Controllers
 
             //增加claims
             var claims = await _userManager.GetClaimsAsync(user);
-            model.Claims = claims.Select(c => c.Value).ToList();
+            model.Claims = claims.Where(c=>c.Value.ToLower() == "true").Select(c => c.Type).ToList();
 
             //增加角色
             var roles = await _userManager.GetRolesAsync(user);
@@ -206,12 +206,13 @@ namespace MockSchoolManagement.Controllers
 
             foreach (var item in ClaimStore.AllClaims)
             {
-                bool isSelected = claims.Where(f => f.Type == item.Type).Any();
-                model.Claims.Add(new UserRoleViewModel() { 
-                
+                bool isSelected = claims.Where(f => f.Type == item.Type && f.Value.ToLower() == "true").Any();
+                model.Claims.Add(new UserRoleViewModel()
+                {
                     Name = item.Type,
                     IsSelected = isSelected
                 });
+
             }
 
 
@@ -238,7 +239,7 @@ namespace MockSchoolManagement.Controllers
                 {
                     if (item.IsSelected)
                     {
-                        await _userManager.AddClaimAsync(user, new Claim(item.Name, item.Name));
+                        await _userManager.AddClaimAsync(user, new Claim(item.Name, item.IsSelected.ToString()));
                     }
                 }
 

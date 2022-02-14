@@ -88,6 +88,7 @@ namespace MockSchoolManagement.Controllers
         }
 
         
+        [Authorize(Policy = "Edit Student")]
         public IActionResult Edit(int id)
         {
             StudentUpdateViewModel model = new StudentUpdateViewModel();

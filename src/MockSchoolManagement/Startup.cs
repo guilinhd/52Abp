@@ -11,6 +11,7 @@ using MockSchoolManagement.CustomerMiddlewares;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using MockSchoolManagement.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace MockSchoolManagement
 {
@@ -28,13 +29,16 @@ namespace MockSchoolManagement
         {
             //services.AddControllersWithViews(a => a.EnableEndpointRouting = false).AddXmlSerializerFormatters();
 
+            services.AddHttpContextAccessor();
+
             services.AddDbContext<AppDbContext>(options => {
                 options.UseSqlServer(Configuration.GetConnectionString("MockStudentDBConnection"));
                 });
 
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddErrorDescriber<CustomIdentityErrorDescriber>()
-                .AddEntityFrameworkStores<AppDbContext>();
+                .AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
 
             services.Configure<IdentityOptions>(options => {
                 options.Password.RequireDigit = false;
@@ -47,15 +51,31 @@ namespace MockSchoolManagement
                 
             });
 
-            services.AddAuthentication(options => { 
-                
-            });
+            services.AddAuthentication()
+                .AddMicrosoftAccount(options => {
+                    options.ClientId = Configuration["Authentication:Microsoft:ClientId"];
+                    options.ClientSecret = Configuration["Authentication:Microsoft:ClientSecret"];
+                    
+                });
+            
             services.AddControllersWithViews(configure => {
                 var policy = new AuthorizationPolicyBuilder()
                     .RequireAuthenticatedUser()
                     .Build();
                 configure.Filters.Add(new AuthorizeFilter(policy));
             });
+
+            services.AddAuthorization(options => {
+                options.AddPolicy("Edit Student", policy => policy.RequireClaim("Edit Student", "True"));
+            });
+
+            //services.Configure<CookiePolicyOptions>(options =>
+            //{
+            //    options.CheckConsentNeeded = context => false;
+            //    options.MinimumSameSitePolicy = SameSiteMode.None;
+            //    options.MinimumSameSitePolicy = SameSiteMode.Lax;
+            //});
+
             //services.AddSingleton<IStudentRepository, MockStudentRepository>();
             services.AddTransient<IStudentRepository, SqlStudentRepository>();
         }

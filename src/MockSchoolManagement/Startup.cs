@@ -52,10 +52,15 @@ namespace MockSchoolManagement
             });
 
             services.AddAuthentication()
-                .AddMicrosoftAccount(options => {
+                .AddMicrosoftAccount(options =>
+                {
                     options.ClientId = Configuration["Authentication:Microsoft:ClientId"];
                     options.ClientSecret = Configuration["Authentication:Microsoft:ClientSecret"];
-                    
+
+                })
+                .AddGitHub(opttions => {
+                    opttions.ClientId = Configuration["Authentication:GitHub:ClientId"];
+                    opttions.ClientSecret = Configuration["Authentication:GitHub:ClientSecret"];
                 });
             
             services.AddControllersWithViews(configure => {

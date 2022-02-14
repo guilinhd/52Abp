@@ -248,7 +248,7 @@ namespace MockSchoolManagement.Controllers
 
                 // 如果我们获取不到电子邮件地址，我们需要将请求重定向到错误视图中。
                 ViewBag.ErrorTitle = $"我们无法从提供商:{info.LoginProvider}中解析到您的邮件地址 ";
-                ViewBag.ErrorMessage = "请通过联系 ltm@ddxc.org 寻求技术支持。";
+                ViewBag.ErrorMessage = "请通过联系寻求技术支持。";
 
                 return View("Error");
             }

@@ -288,5 +288,103 @@ namespace MockSchoolManagement.Controllers
             ViewBag.ErrorTitle = "您的电子邮箱还未进行验证";
             return View("Error");
         }
+
+        [HttpGet]
+        public IActionResult ActivateUserEmail()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ActivateUserEmail(EmailAddressViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    if (!await _userManager.IsEmailConfirmedAsync(user))
+                    {
+                        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                        var confirmationLink = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, token = token }, Request.Scheme);
+                        //需要注入ILogger<AccountController> _logger;服务，记录生成的URL链接
+                        _logger.Log(LogLevel.Warning, confirmationLink);
+                        ViewBag.ErrorTitle = "注册成功";
+                        ViewBag.ErrorMessage = "如果你在我们系统有注册账户，我们已经发了邮件到您的邮箱中，请前往邮箱激活您的用户。";
+                        return View("ActivateUserEmailConfirmation", ViewBag.Message);
+                    }
+                }
+            }
+
+            ViewBag.Message = "请确认邮箱是否存在异常，现在我们无法给您发送激活链接。";
+            // 为了避免帐户枚举和暴力攻击，所以不进行用户不存在或邮箱未验证的提示
+            return View("ActivateUserEmailConfirmation", ViewBag.Message);
+        }
+
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(EmailAddressViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user != null)
+                {
+                    if (await _userManager.IsEmailConfirmedAsync(user))
+                    {
+                        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+                        var passwordLink = Url.Action("ResetPassword", "Account", new { email = model.Email, token = token}, Request.Scheme);
+                        //需要注入ILogger<AccountController> _logger;服务，记录生成的URL链接
+                        _logger.Log(LogLevel.Warning, passwordLink);
+                        return View("ForgotPasswordConfirmation", ViewBag.Message);
+                    }
+                }
+            }
+
+            return View("ForgotPasswordConfirmation");
+        }
+
+        [HttpGet]
+        public IActionResult ResetPassword(string token, string email)
+        {
+            //如果密码重置令牌或电子邮件为空，则有可能是用户在试图篡改密码重置链接
+            if (token == null || email == null)
+            {
+                ModelState.AddModelError("", "无效的密码重置令牌");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+
+                if (user != null)
+                {
+                    var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
+                    if (result.Succeeded)
+                    {
+                        return View("ResetPasswordConfirm");
+                    }
+
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+            }
+
+            return View(model);
+        }
     }
 }

@@ -46,9 +46,7 @@ namespace MockSchoolManagement
                 options.Password.RequireNonAlphanumeric = false;
                 options.Password.RequireUppercase = false;
 
-                options.SignIn.RequireConfirmedEmail = false;
-
-                
+                options.SignIn.RequireConfirmedEmail = true;
             });
 
             services.AddAuthentication()

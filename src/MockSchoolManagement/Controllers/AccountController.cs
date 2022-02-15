@@ -34,7 +34,6 @@ namespace MockSchoolManagement.Controllers
             return View();
         }
 
-
         [HttpPost]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
@@ -50,16 +49,26 @@ namespace MockSchoolManagement.Controllers
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    if (User.IsInRole("Admin"))
+                    //生成电子邮件确认令牌
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    //生成电子邮件的确认链接
+                    var confirmationLink = Url.Action("ConfirmEmail", "Account",
+                    new { userId = user.Id, token = token }, Request.Scheme);
+                    //需要注入ILogger<AccountController> _logger;服务，记录生成的URL链接
+                    _logger.Log(LogLevel.Warning, confirmationLink);
+
+                    //如果用户已登录并属于Admin角色。
+                    //那么就是Admin正在创建新用户。
+                    //所以重定向Admin用户到ListRoles的视图列表
+                    if (_signInManager.IsSignedIn(User) && User.IsInRole("Admin"))
                     {
                         return RedirectToAction("Index", "User");
                     }
-                    else
-                    {
-                        await _signInManager.SignInAsync(user, false);
-                        return RedirectToAction("Index", "Home");
-                    }
-                    
+
+                    ViewBag.ErrorTitle = "注册成功";
+                    ViewBag.ErrorMessage = $"在你登入系统前,我们已经给您发了一份邮件，需要您先进行邮件验证，点击确认链接即可完成。";
+                    return View("Error");
+
                 }
 
                 foreach (var error in result.Errors)
@@ -85,30 +94,32 @@ namespace MockSchoolManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(LoginViewModel model, string returnUrl)
         {
+            model.ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+
             if (ModelState.IsValid)
             {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                if (user != null && !user.EmailConfirmed && (await _userManager.CheckPasswordAsync(user, model.Password)))
+                {
+                    ModelState.AddModelError(string.Empty, "您的电子邮箱还未进行验证。");
+                    return View(model);
+                }
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
                 if (result.Succeeded)
                 {
-                    if (string.IsNullOrEmpty(returnUrl))
-                    {
-                        return RedirectToAction("Index", "Home");
-                    }
-                    else
+                    if (!string.IsNullOrEmpty(returnUrl))
                     {
                         if (Url.IsLocalUrl(returnUrl))
                         {
                             return Redirect(returnUrl);
                         }
-                        else
-                        {
-                            return RedirectToAction("Index", "Home");
-                        }
-                        
+                    }
+                    else
+                    {
+                        return RedirectToAction("index", "home");
                     }
                 }
-
-                ModelState.AddModelError(string.Empty, "用户名或者密码不正确!");
+                ModelState.AddModelError(string.Empty, "登录失败，请重试");
             }
 
             return View(model);
@@ -208,14 +219,11 @@ namespace MockSchoolManagement.Controllers
             {
                 return LocalRedirect(returnUrl);
             }
-
             //如果AspNetUserLogins表中没有记录，则代表用户没有一个本地帐户，这个时候我们就需要创建一个记录了。       
             else
             {
-
                 if (email != null)
                 {
-
                     if (user == null)
                     {
                         user = new ApplicationUser
@@ -252,6 +260,33 @@ namespace MockSchoolManagement.Controllers
 
                 return View("Error");
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            if (userId == null || token == null)
+            {
+                return RedirectToAction("index", "home");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"当前{userId}无效";
+                return View("NotFound");
+            }
+
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+
+            if (result.Succeeded)
+            {
+                return View();
+            }
+
+            ViewBag.ErrorTitle = "您的电子邮箱还未进行验证";
+            return View("Error");
         }
     }
 }

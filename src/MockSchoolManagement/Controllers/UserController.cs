@@ -262,8 +262,18 @@ namespace MockSchoolManagement.Controllers
         }
 
         [HttpGet]
-        public IActionResult ChangePassword()
+        public async Task<IActionResult> ChangePassword()
         {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+            if (!(await _userManager.HasPasswordAsync(user)))
+            {
+                return View("AddPassword");
+            }
+
             return View();
         }
 
@@ -289,6 +299,39 @@ namespace MockSchoolManagement.Controllers
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
 
+            }
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult AddPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddPassword(AddPasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+
+                var result = await _userManager.AddPasswordAsync(user, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    await _signInManager.RefreshSignInAsync(user);
+                    return View("AddPasswordConfirmation");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
             }
 
             return View(model);

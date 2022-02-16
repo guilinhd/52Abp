@@ -13,6 +13,8 @@ using MockSchoolManagement.ViewModels;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using Microsoft.AspNetCore.Authorization;
+using MockSchoolManagement.Security.CustomTokenProvider;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace MockSchoolManagement.Controllers
 {
@@ -23,18 +25,29 @@ namespace MockSchoolManagement.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IStudentRepository _studentRepository;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IDataProtectionProvider _dataProtectionProvider;
+        private readonly IDataProtector _protector;
+
         public HomeController(ILogger<HomeController> logger, 
             IStudentRepository studentRepository,
-            IWebHostEnvironment webHostEnvironment)
+            IWebHostEnvironment webHostEnvironment,
+            IDataProtectionProvider dataProtectionProvider,
+            DataProtectionPurposeStrings dataProtectionPurposeStrings)
         {
             _logger = logger;
             _studentRepository = studentRepository;
             _webHostEnvironment = webHostEnvironment;
+            _protector = dataProtectionProvider.CreateProtector(dataProtectionPurposeStrings.StudentIdRouteValue);
         }
 
         [AllowAnonymous]
         public IActionResult Index()
         {
+            List<Student> students = _studentRepository.GetStudents().ToList();
+            foreach (var student in students)
+            {
+                student.EncryptedId = _protector.Protect(student.Id.ToString());
+            }
 
             return View(_studentRepository.GetStudents());
         }
@@ -156,7 +169,7 @@ namespace MockSchoolManagement.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Details(int id)
+        public IActionResult Details(string id)
         {
             //return Json(_studentRepository.GetStudent(1), new JsonSerializerOptions()
             //{
@@ -164,7 +177,7 @@ namespace MockSchoolManagement.Controllers
             //});
 
             //throw new Exception("Details 视图出错了!");
-            Student student = _studentRepository.GetStudent(id);
+            Student student = _studentRepository.GetStudent(Convert.ToInt32(_protector.Unprotect(id)));
             if (student == null)
             {
                 ViewBag.ErrorMessage = $"学生Id:{id} 的信息不存在!";
@@ -172,7 +185,7 @@ namespace MockSchoolManagement.Controllers
             }
             else
             {
-                return View(_studentRepository.GetStudent(id));
+                return View(student);
             }
 
             //_logger.LogTrace("Trace Log");

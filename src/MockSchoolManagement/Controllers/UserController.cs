@@ -13,26 +13,31 @@ using System.Security.Claims;
 
 namespace MockSchoolManagement.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    
     public class UserController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public UserController(ILogger<UserController> logger,
+            SignInManager<ApplicationUser> signInManager,
             UserManager<ApplicationUser> userManager,
             RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _signInManager = signInManager;
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Index()
         {
             var users = _userManager.Users.ToList();
             return View(users);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Edit(string id)
         {
@@ -62,6 +67,7 @@ namespace MockSchoolManagement.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Edit(UserUpdateViewModel model)
         {
@@ -93,6 +99,7 @@ namespace MockSchoolManagement.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Delete(string id)
         {
@@ -117,6 +124,7 @@ namespace MockSchoolManagement.Controllers
             return RedirectToAction("Index", "User");
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Role(string id)
         {
@@ -143,6 +151,7 @@ namespace MockSchoolManagement.Controllers
             return View(models);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Role(List<UserRoleViewModel> models, string id)
         {
@@ -186,6 +195,7 @@ namespace MockSchoolManagement.Controllers
             return RedirectToAction("Edit", new { id });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> Claim(string id)
         {
@@ -219,6 +229,7 @@ namespace MockSchoolManagement.Controllers
             return View(model);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> Claim(UserClaimViewModel model)
         {
@@ -246,6 +257,39 @@ namespace MockSchoolManagement.Controllers
                 return RedirectToAction("Edit", new { id});
             }
             
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null)
+                {
+                    return RedirectToAction("Login", "Account");
+                }
+                var result = await _userManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
+                if (result.Succeeded)
+                {
+                    await _signInManager.RefreshSignInAsync(user);
+                    return View("ChangePasswordConfirm");
+                }
+
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+
+            }
 
             return View(model);
         }

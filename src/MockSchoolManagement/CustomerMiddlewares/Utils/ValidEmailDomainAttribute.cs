@@ -16,8 +16,12 @@ namespace MockSchoolManagement.CustomerMiddlewares.Utils
 
         public override bool IsValid(object value)
         {
+            if (value == null)
+            {
+                return false;
+            }
+           
             string[] vs = value.ToString().Split('@');
-
             return vs[1].ToUpper() == _allowedDomain.ToUpper();
         }
     }

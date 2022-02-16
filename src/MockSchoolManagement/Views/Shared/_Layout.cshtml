@@ -53,23 +53,24 @@
                             <a class="nav-link" asp-controller="home" asp-action="create">添加学生</a>
                         </li>
                     }
-                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
-                    {
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle"
-                               href="#"
-                               id="navbarDropdownMenuLink"
-                               data-toggle="dropdown"
-                               aria-haspopup="true"
-                               aria-expanded="false">
-                                管理
-                            </a>
-                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle"
+                            href="#"
+                            id="navbarDropdownMenuLink"
+                            data-toggle="dropdown"
+                            aria-haspopup="true"
+                            aria-expanded="false">
+                            管理
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                            {
                                 <a class="dropdown-item" asp-controller="User" asp-action="Index">用户列表</a>
                                 <a class="dropdown-item" asp-controller="Admin" asp-action="Index">角色列表</a>
-                            </div>
-                        </li>
-                    }
+                            }
+                            <a class="dropdown-item" asp-controller="User" asp-action="ChangePassword">修改密码</a>
+                        </div>
+                    </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
 

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using MockSchoolManagement.Models;
 using Microsoft.AspNetCore.Http;
+using MockSchoolManagement.Security.CustomTokenProvider;
 
 namespace MockSchoolManagement
 {
@@ -38,7 +39,8 @@ namespace MockSchoolManagement
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddErrorDescriber<CustomIdentityErrorDescriber>()
                 .AddEntityFrameworkStores<AppDbContext>()
-                .AddDefaultTokenProviders();
+                .AddDefaultTokenProviders()
+                .AddTokenProvider<CustomEmailConfirmationTokenProvider<ApplicationUser>>("CustomEmailConfirmation");
 
             services.Configure<IdentityOptions>(options => {
                 options.Password.RequireDigit = false;
@@ -47,6 +49,9 @@ namespace MockSchoolManagement
                 options.Password.RequireUppercase = false;
 
                 options.SignIn.RequireConfirmedEmail = true;
+
+                options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
+                
             });
 
             services.AddAuthentication()
@@ -72,6 +77,14 @@ namespace MockSchoolManagement
                 options.AddPolicy("Edit Student", policy => policy.RequireClaim("Edit Student", "True"));
             });
 
+            services.Configure<DataProtectionTokenProviderOptions>(config => {
+                config.TokenLifespan = System.TimeSpan.FromHours(5);
+            });
+
+            services.Configure<CustomEmailConfirmationTokenProviderOptions>(config => {
+                config.TokenLifespan = System.TimeSpan.FromMinutes(5);
+            });
+
             //services.Configure<CookiePolicyOptions>(options =>
             //{
             //    options.CheckConsentNeeded = context => false;
@@ -81,6 +94,7 @@ namespace MockSchoolManagement
 
             //services.AddSingleton<IStudentRepository, MockStudentRepository>();
             services.AddTransient<IStudentRepository, SqlStudentRepository>();
+            services.AddSingleton<DataProtectionPurposeStrings>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

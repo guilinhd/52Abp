@@ -13,7 +13,6 @@ namespace MockSchoolManagement.ViewModels
         [Required]
         [EmailAddress]
         [Display(Name = "邮箱")]
-        [Remote(action: "IsEmailInUse", controller: "Account")]
         [ValidEmailDomain(allowedDomain: "qq.com", ErrorMessage = "只能使用QQ邮箱")]
         public string Email { get; set; }
 

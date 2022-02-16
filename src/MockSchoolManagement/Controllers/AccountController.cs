@@ -119,6 +119,11 @@ namespace MockSchoolManagement.Controllers
                         return RedirectToAction("index", "home");
                     }
                 }
+
+                if (await _userManager.IsLockedOutAsync(user))
+                {
+                    return View("AccountLocked");
+                }
                 ModelState.AddModelError(string.Empty, "登录失败，请重试");
             }
 
@@ -374,6 +379,10 @@ namespace MockSchoolManagement.Controllers
                     var result = await _userManager.ResetPasswordAsync(user, model.Token, model.Password);
                     if (result.Succeeded)
                     {
+                        if (await _userManager.IsLockedOutAsync(user))
+                        {
+                            await _userManager.SetLockoutEndDateAsync(user, DateTimeOffset.UtcNow);
+                        }
                         return View("ResetPasswordConfirm");
                     }
 

@@ -51,7 +51,9 @@ namespace MockSchoolManagement
                 options.SignIn.RequireConfirmedEmail = true;
 
                 options.Tokens.EmailConfirmationTokenProvider = "CustomEmailConfirmation";
-                
+
+                options.Lockout.DefaultLockoutTimeSpan = System.TimeSpan.FromMinutes(10);
+                options.Lockout.MaxFailedAccessAttempts = 5;
             });
 
             services.AddAuthentication()

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MockSchoolManagement.Infrastructure;
 
 namespace MockSchoolManagement.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220218053046_AddStudentRelationCourse")]
+    partial class AddStudentRelationCourse
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,9 +246,6 @@ namespace MockSchoolManagement.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("EnrollmentDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("Major")
                         .HasColumnType("int");
 
@@ -266,7 +265,6 @@ namespace MockSchoolManagement.Migrations
                         {
                             Id = 1,
                             Email = "zhangsan@hotmail.com",
-                            EnrollmentDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Major = 1,
                             Name = "张三"
                         },
@@ -274,7 +272,6 @@ namespace MockSchoolManagement.Migrations
                         {
                             Id = 2,
                             Email = "lisi@hotmail.com",
-                            EnrollmentDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Major = 2,
                             Name = "李四"
                         },
@@ -282,7 +279,6 @@ namespace MockSchoolManagement.Migrations
                         {
                             Id = 3,
                             Email = "wangwu@hotmail.com",
-                            EnrollmentDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Major = 3,
                             Name = "王五"
                         });

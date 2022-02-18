@@ -30,5 +30,10 @@ namespace MockSchoolManagement.Models
 
         [NotMapped]
         public string EncryptedId { get; set; }
+
+        [Display(Name = "入学时间")]
+        public DateTime EnrollmentDate { set; get; }
+
+        public ICollection<StudentCourse> StudentCourses { set; get; }
     }
 }

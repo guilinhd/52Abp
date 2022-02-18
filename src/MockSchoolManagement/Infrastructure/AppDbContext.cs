@@ -13,6 +13,10 @@ namespace MockSchoolManagement.Infrastructure
     {
         public DbSet<Student> Students { set; get; }
 
+        public DbSet<Course> Courses { set; get; }
+
+        public DbSet<StudentCourse> StudentCourses { set; get; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
 

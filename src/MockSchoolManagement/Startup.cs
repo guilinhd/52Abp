@@ -96,6 +96,7 @@ namespace MockSchoolManagement
 
             //services.AddSingleton<IStudentRepository, MockStudentRepository>();
             services.AddTransient<IStudentRepository, SqlStudentRepository>();
+            services.AddTransient<ICourseRepository, SqlCourseRepository>();
             services.AddSingleton<DataProtectionPurposeStrings>();
         }
 

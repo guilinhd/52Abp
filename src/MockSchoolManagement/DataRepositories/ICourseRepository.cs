@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MockSchoolManagement.DataRepositories
 {
-    public class ICourseRepository
+    public interface ICourseRepository
     {
     }
 }
